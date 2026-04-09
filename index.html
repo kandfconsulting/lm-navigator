@@ -3,24 +3,31 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LM Navigator</title>
+<title>Marketing Hub — LM Navigator</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0a0a0f;
-    --surface: #111118;
-    --surface2: #16161f;
-    --border: #1e1e2e;
-    --border2: #2a2a3e;
-    --accent: #5b6cff;
-    --accent2: #7c8bff;
-    --accent-glow: rgba(91,108,255,0.15);
-    --text: #e8e8f0;
-    --text2: #9090a8;
-    --text3: #5a5a70;
-    --success: #3ecf8e;
-    --warning: #f5a623;
-    --tag-bg: rgba(91,108,255,0.12);
+    --bg: #f4f5f7;
+    --surface: #ffffff;
+    --surface2: #f9f9fb;
+    --sidebar-bg: #1b1b2f;
+    --sidebar-text: #b0b0c8;
+    --sidebar-active-bg: rgba(124,139,255,0.14);
+    --sidebar-active-text: #a8b4ff;
+    --border: #e2e4ea;
+    --border2: #d0d3db;
+    --accent: #4f5bd5;
+    --accent2: #6b75e0;
+    --accent-light: #eef0ff;
+    --accent-glow: rgba(79,91,213,0.08);
+    --text: #1a1a2e;
+    --text2: #5c5e72;
+    --text3: #9496a8;
+    --success: #16a46c;
+    --success-light: #e6f7ef;
+    --warning: #e0930b;
+    --warning-light: #fef7e6;
+    --tag-bg: rgba(79,91,213,0.08);
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -30,46 +37,34 @@
     color: var(--text);
     font-family: 'Noto Sans JP', sans-serif;
     min-height: 100vh;
-    overflow-x: hidden;
+    display: flex;
   }
 
-  /* Grid background */
-  body::before {
-    content: '';
+  /* ═══ Sidebar ═══ */
+  .sidebar {
+    width: 220px;
+    min-width: 220px;
+    background: var(--sidebar-bg);
+    display: flex;
+    flex-direction: column;
     position: fixed;
-    inset: 0;
-    background-image:
-      linear-gradient(rgba(91,108,255,0.04) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(91,108,255,0.04) 1px, transparent 1px);
-    background-size: 40px 40px;
-    pointer-events: none;
-    z-index: 0;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 100;
   }
 
-  .app {
-    position: relative;
-    z-index: 1;
-    max-width: 860px;
-    margin: 0 auto;
-    padding: 48px 24px 80px;
-  }
-
-  /* Header */
-  .header {
-    margin-bottom: 40px;
-    animation: fadeUp 0.6s ease both;
-  }
-
-  .logo {
+  .sidebar-logo {
+    padding: 20px 18px 18px;
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-bottom: 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
   }
 
-  .logo-mark {
-    width: 32px;
-    height: 32px;
+  .sidebar-logo-mark {
+    width: 30px;
+    height: 30px;
     background: var(--accent);
     border-radius: 8px;
     display: flex;
@@ -77,128 +72,224 @@
     justify-content: center;
     font-family: 'Syne', sans-serif;
     font-weight: 800;
-    font-size: 14px;
+    font-size: 12px;
     color: white;
-    letter-spacing: -0.5px;
+    letter-spacing: -0.3px;
   }
 
-  .logo-text {
+  .sidebar-logo-text {
     font-family: 'Syne', sans-serif;
-    font-weight: 700;
-    font-size: 15px;
-    color: var(--text2);
-    letter-spacing: 0.05em;
+    font-weight: 600;
+    font-size: 14px;
+    color: #e0e0f0;
+    letter-spacing: 0.02em;
+  }
+
+  .sidebar-section-label {
+    padding: 20px 18px 8px;
+    font-size: 10px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.28);
+    letter-spacing: 0.1em;
     text-transform: uppercase;
   }
 
-  /* ヒーローセクション */
-  .hero {
-    margin-bottom: 32px;
+  .sidebar-nav {
+    padding: 0 10px;
+    flex: 1;
   }
 
-  .hero-title {
-    font-family: 'Syne', sans-serif;
-    font-size: 28px;
-    font-weight: 800;
-    letter-spacing: -0.5px;
-    line-height: 1.2;
-    color: var(--text);
-    margin-bottom: 10px;
+  .sidebar-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--sidebar-text);
+    margin-bottom: 2px;
+    transition: all 0.15s;
   }
 
-  .hero-title span { color: var(--accent2); }
+  .sidebar-nav-item:hover {
+    background: rgba(255,255,255,0.04);
+  }
 
-  .hero-desc {
+  .sidebar-nav-item.active {
+    background: var(--sidebar-active-bg);
+    color: var(--sidebar-active-text);
+    font-weight: 500;
+  }
+
+  .sidebar-nav-icon {
+    width: 18px;
+    text-align: center;
     font-size: 15px;
-    color: var(--text2);
-    line-height: 1.7;
-    margin-bottom: 20px;
+    flex-shrink: 0;
   }
 
-  /* 使い方フロー */
-  .how-it-works {
+  /* ═══ Main ═══ */
+  .main-wrapper {
+    margin-left: 220px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  .topbar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 28px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
+  .topbar-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--text);
+    letter-spacing: 0.01em;
+  }
+
+  .content-area {
+    flex: 1;
+    padding: 24px 28px 80px;
+    max-width: 880px;
+  }
+
+  /* ═══ How-to box ═══ */
+  .how-box {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 20px;
+    line-height: 1.7;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  .how-icon {
+    font-size: 16px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .how-text {
+    font-size: 13px;
+    color: var(--text2);
+  }
+
+  .how-text strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  /* ═══ Flow bar ═══ */
+  .flow-bar {
     display: flex;
     align-items: center;
     gap: 0;
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 14px 20px;
+    border-radius: 10px;
+    padding: 12px 18px;
+    margin-bottom: 22px;
     overflow-x: auto;
+    animation: fadeUp 0.5s ease 0.05s both;
   }
 
-  .how-step {
+  .flow-step {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 7px;
     flex-shrink: 0;
   }
 
-  .how-step-num {
+  .flow-num {
     width: 22px;
     height: 22px;
     border-radius: 50%;
-    background: var(--accent-glow);
-    border: 1px solid var(--accent);
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 11px;
     font-weight: 700;
-    color: var(--accent2);
     flex-shrink: 0;
+    transition: all 0.3s;
   }
 
-  .how-step-text {
-    font-size: 12px;
-    color: var(--text2);
-    white-space: nowrap;
-  }
-
-  .how-step-text strong {
-    color: var(--text);
-    font-weight: 500;
-    display: block;
-    font-size: 12px;
-  }
-
-  .how-arrow {
-    font-size: 14px;
+  .flow-num.pending {
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
     color: var(--text3);
+  }
+
+  .flow-num.current {
+    background: var(--accent);
+    color: white;
+    box-shadow: 0 2px 8px rgba(79,91,213,0.25);
+  }
+
+  .flow-num.done {
+    background: var(--success);
+    color: white;
+  }
+
+  .flow-label {
+    font-size: 12px;
+    color: var(--text3);
+    white-space: nowrap;
+    font-weight: 400;
+    transition: all 0.3s;
+  }
+
+  .flow-label.current { color: var(--text); font-weight: 600; }
+  .flow-label.done { color: var(--success); font-weight: 500; }
+
+  .flow-arrow {
     margin: 0 12px;
+    font-size: 13px;
+    color: var(--border2);
     flex-shrink: 0;
   }
 
-
-
-  /* Step */
+  /* ═══ Step containers ═══ */
   .step {
-    margin-bottom: 28px;
-    animation: fadeUp 0.6s ease both;
+    margin-bottom: 24px;
+    animation: fadeUp 0.5s ease both;
   }
 
   .step-label {
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 600;
     color: var(--text);
-    margin-bottom: 6px;
+    margin-bottom: 5px;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
   }
 
   .step-label-num {
-    width: 24px;
-    height: 24px;
+    width: 22px;
+    height: 22px;
     border-radius: 50%;
-    background: var(--accent-glow);
-    border: 1px solid rgba(91,108,255,0.3);
+    background: var(--accent-light);
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 11px;
     font-weight: 700;
-    color: var(--accent2);
+    color: var(--accent);
     flex-shrink: 0;
   }
 
@@ -206,10 +297,10 @@
     font-size: 12px;
     color: var(--text3);
     margin-bottom: 12px;
-    line-height: 1.5;
+    line-height: 1.6;
   }
 
-  /* Category Grid */
+  /* ═══ Category grid ═══ */
   .category-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -218,11 +309,11 @@
 
   .cat-btn {
     background: var(--surface);
-    border: 1px solid var(--border);
+    border: 1.5px solid var(--border);
     border-radius: 10px;
     padding: 14px 12px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.18s ease;
     text-align: left;
   }
 
@@ -230,17 +321,18 @@
     border-color: var(--accent);
     background: var(--accent-glow);
     transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(79,91,213,0.08);
   }
 
   .cat-btn.selected {
     border-color: var(--accent);
-    background: var(--accent-glow);
+    background: var(--accent-light);
     box-shadow: 0 0 0 1px var(--accent);
   }
 
   .cat-icon {
     font-size: 20px;
-    margin-bottom: 8px;
+    margin-bottom: 7px;
     display: block;
   }
 
@@ -258,26 +350,35 @@
     line-height: 1.5;
   }
 
-    /* Input fields */
-  .input-group {
-    margin-bottom: 16px;
+  /* ═══ Input fields ═══ */
+  .input-group { margin-bottom: 14px; }
+
+  .input-group label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text2);
+    margin-bottom: 5px;
   }
 
   .input-group .optional {
     font-size: 10px;
     color: var(--text3);
-    margin-left: 6px;
+    margin-left: 5px;
     font-weight: 400;
+    background: var(--surface2);
+    padding: 1px 5px;
+    border-radius: 3px;
   }
 
   .input-group input,
   .input-group textarea {
     width: 100%;
-    background: var(--surface);
-    border: 1px solid var(--border);
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
     border-radius: 8px;
-    padding: 12px 14px;
-    font-size: 14px;
+    padding: 11px 14px;
+    font-size: 13px;
     font-family: 'Noto Sans JP', sans-serif;
     color: var(--text);
     outline: none;
@@ -293,15 +394,16 @@
   .input-group input:focus,
   .input-group textarea:focus {
     border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(79,91,213,0.08);
   }
 
-  /* Aux fields */
+  /* ═══ Aux fields ═══ */
   .aux-fields {
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 10px;
     padding: 16px;
-    margin-bottom: 16px;
+    margin-bottom: 14px;
     display: none;
   }
 
@@ -310,24 +412,30 @@
   .aux-fields-title {
     font-size: 11px;
     color: var(--text3);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    margin-bottom: 12px;
+    letter-spacing: 0.05em;
+    margin-bottom: 10px;
+    font-weight: 500;
+  }
+
+  .aux-fields-title span {
+    font-weight: 400;
+    color: var(--text3);
+    margin-left: 4px;
   }
 
   .aux-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 12px;
+    gap: 10px;
   }
 
-  /* Submit button */
+  /* ═══ Submit button ═══ */
   .submit-btn {
     width: 100%;
     background: var(--accent);
     border: none;
     border-radius: 10px;
-    padding: 16px;
+    padding: 14px;
     font-size: 14px;
     font-weight: 500;
     font-family: 'Noto Sans JP', sans-serif;
@@ -343,16 +451,16 @@
 
   .submit-btn:hover:not(:disabled) {
     background: var(--accent2);
-    box-shadow: 0 4px 20px rgba(91,108,255,0.4);
+    box-shadow: 0 4px 16px rgba(79,91,213,0.3);
     transform: translateY(-1px);
   }
 
   .submit-btn:disabled {
-    opacity: 0.4;
+    opacity: 0.35;
     cursor: not-allowed;
   }
 
-  /* Loading */
+  /* ═══ Loading ═══ */
   .loading {
     display: none;
     text-align: center;
@@ -362,21 +470,21 @@
   .loading.visible { display: block; }
 
   .spinner {
-    width: 36px;
-    height: 36px;
-    border: 2px solid var(--border2);
+    width: 32px;
+    height: 32px;
+    border: 2.5px solid var(--border);
     border-top-color: var(--accent);
     border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-    margin: 0 auto 16px;
+    animation: spin 0.7s linear infinite;
+    margin: 0 auto 14px;
   }
 
   .loading-text {
-    font-size: 14px;
+    font-size: 13px;
     color: var(--text2);
   }
 
-  /* Result */
+  /* ═══ Result section ═══ */
   .result-section {
     display: none;
     animation: fadeUp 0.5s ease both;
@@ -384,52 +492,57 @@
 
   .result-section.visible { display: block; }
 
-  /* ── 推奨機能タブ ── */
+  .result-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 28px 0;
+  }
+
+  /* ── Feature tabs ── */
   .feat-tabs {
     display: flex;
     gap: 0;
     margin-bottom: 0;
-    border-radius: 12px 12px 0 0;
+    border-radius: 10px 10px 0 0;
     overflow: hidden;
-    border: 1px solid var(--border);
+    border: 1.5px solid var(--border);
     border-bottom: none;
   }
 
   .feat-tab {
     flex: 1;
-    padding: 14px 18px;
+    padding: 14px 16px;
     background: var(--surface);
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.15s;
     position: relative;
     border-right: 1px solid var(--border);
   }
 
   .feat-tab:last-child { border-right: none; }
-
   .feat-tab:hover { background: var(--surface2); }
 
   .feat-tab.active {
-    background: var(--surface2);
+    background: var(--accent-light);
   }
 
   .feat-tab.active::after {
     content: '';
     position: absolute;
     bottom: 0; left: 0; right: 0;
-    height: 2px;
+    height: 2.5px;
     background: var(--accent);
   }
 
   .feat-tab-priority {
     font-size: 10px;
     color: var(--text3);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.06em;
     margin-bottom: 3px;
+    font-weight: 500;
   }
 
-  .feat-tab.active .feat-tab-priority { color: var(--accent2); }
+  .feat-tab.active .feat-tab-priority { color: var(--accent); }
 
   .feat-tab-name {
     font-size: 14px;
@@ -444,27 +557,28 @@
   .feat-tab-reason {
     font-size: 12px;
     color: var(--text2);
-    line-height: 1.6;
+    line-height: 1.55;
   }
 
-  /* ── キーワードパネル ── */
+  /* ── Keyword panel ── */
   .kw-panel {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 0 0 12px 12px;
-    padding: 20px;
-    margin-bottom: 20px;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 10px 10px;
+    padding: 18px;
+    margin-bottom: 16px;
   }
 
   .kw-panel-title {
     font-size: 11px;
     color: var(--text3);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    margin-bottom: 12px;
+    letter-spacing: 0.08em;
+    margin-bottom: 10px;
     display: flex;
     align-items: center;
     gap: 8px;
+    font-weight: 500;
   }
 
   .kw-mode-badge {
@@ -475,38 +589,36 @@
   }
 
   .kw-mode-badge.multi {
-    background: rgba(91,108,255,0.15);
-    color: var(--accent2);
-    border: 1px solid rgba(91,108,255,0.25);
+    background: var(--accent-light);
+    color: var(--accent);
+    border: 1px solid rgba(79,91,213,0.2);
   }
 
   .kw-mode-badge.single {
-    background: rgba(62,207,142,0.1);
+    background: var(--success-light);
     color: var(--success);
-    border: 1px solid rgba(62,207,142,0.25);
+    border: 1px solid rgba(22,164,108,0.2);
   }
 
-  /* キーワードアイテム */
   .kw-item {
-    background: var(--surface);
-    border: 1px solid var(--border);
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
     border-radius: 8px;
     padding: 11px 14px;
     display: flex;
     align-items: center;
     gap: 12px;
     cursor: pointer;
-    transition: all 0.18s;
-    margin-bottom: 7px;
+    transition: all 0.15s;
+    margin-bottom: 6px;
   }
 
   .kw-item:last-child { margin-bottom: 0; }
   .kw-item:hover { border-color: var(--border2); }
 
-  /* チェックボックス（複数選択） */
   .kw-item.checked {
     border-color: var(--accent);
-    background: rgba(91,108,255,0.07);
+    background: var(--accent-light);
   }
 
   .kw-checkbox {
@@ -517,7 +629,7 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    transition: all 0.18s;
+    transition: all 0.15s;
   }
 
   .kw-item.checked .kw-checkbox {
@@ -528,10 +640,9 @@
   .kw-check-icon { display: none; color: white; font-size: 10px; }
   .kw-item.checked .kw-check-icon { display: block; }
 
-  /* ラジオ（単一選択） */
   .kw-item.radio-selected {
     border-color: var(--success);
-    background: rgba(62,207,142,0.07);
+    background: var(--success-light);
   }
 
   .kw-radio {
@@ -542,7 +653,7 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    transition: all 0.18s;
+    transition: all 0.15s;
   }
 
   .kw-radio.selected { border-color: var(--success); }
@@ -551,16 +662,15 @@
     width: 8px; height: 8px;
     border-radius: 50%;
     background: transparent;
-    transition: background 0.18s;
+    transition: background 0.15s;
   }
 
   .kw-radio.selected .kw-radio-dot { background: var(--success); }
 
   .kw-text {
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 500;
     color: var(--text);
-    flex: 1;
   }
 
   .kw-purpose {
@@ -575,21 +685,21 @@
     border: 1px solid var(--border);
     border-left: 3px solid var(--warning);
     border-radius: 8px;
-    padding: 11px 14px;
+    padding: 12px 14px;
     font-size: 12px;
     color: var(--text2);
-    line-height: 1.6;
-    margin-bottom: 20px;
+    line-height: 1.65;
+    margin-bottom: 16px;
   }
 
-  /* ── アクションガイド ── */
+  /* ── Action guide ── */
   .action-guide {
-    background: var(--surface2);
+    background: var(--surface);
     border: 1px solid var(--border);
     border-left: 3px solid var(--success);
     border-radius: 10px;
     padding: 16px 18px;
-    margin-bottom: 16px;
+    margin-bottom: 14px;
     animation: fadeUp 0.4s ease both;
   }
 
@@ -606,8 +716,7 @@
     font-size: 12px;
     font-weight: 600;
     color: var(--text2);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.05em;
     flex: 1;
   }
 
@@ -615,9 +724,9 @@
     font-size: 10px;
     padding: 2px 8px;
     border-radius: 20px;
-    background: rgba(62,207,142,0.12);
+    background: var(--success-light);
     color: var(--success);
-    border: 1px solid rgba(62,207,142,0.25);
+    border: 1px solid rgba(22,164,108,0.2);
   }
 
   .action-guide-body {
@@ -627,19 +736,11 @@
     white-space: pre-wrap;
   }
 
-  .action-guide-loading {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    color: var(--text3);
-    font-size: 13px;
-  }
-
   .action-guide-advice {
     margin-top: 14px;
     padding: 10px 12px;
-    background: rgba(245,166,35,0.08);
-    border: 1px solid rgba(245,166,35,0.25);
+    background: var(--warning-light);
+    border: 1px solid rgba(224,147,11,0.2);
     border-radius: 6px;
     font-size: 12px;
     color: var(--text2);
@@ -650,28 +751,18 @@
     color: var(--warning);
   }
 
-  .action-guide-spinner {
-    width: 14px;
-    height: 14px;
-    border: 1.5px solid var(--border2);
-    border-top-color: var(--success);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-    flex-shrink: 0;
-  }
-
-    /* ── 調査実行ボタン ── */
+  /* ── Run button ── */
   .run-btn {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 10px;
     width: 100%;
-    padding: 17px;
+    padding: 15px;
     background: var(--accent);
     border: none;
     border-radius: 10px;
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 600;
     font-family: 'Noto Sans JP', sans-serif;
     color: white;
@@ -680,60 +771,61 @@
     transition: all 0.2s;
     margin-bottom: 12px;
     letter-spacing: 0.02em;
-    box-sizing: border-box;
   }
 
   .run-btn:hover:not(.disabled) {
     background: var(--accent2);
-    box-shadow: 0 4px 24px rgba(91,108,255,0.45);
+    box-shadow: 0 4px 20px rgba(79,91,213,0.35);
     transform: translateY(-1px);
   }
 
   .run-btn.disabled {
     background: var(--surface2);
     color: var(--text3);
-    border: 1px solid var(--border);
+    border: 1.5px solid var(--border);
     cursor: not-allowed;
     pointer-events: none;
   }
 
   .run-btn-arrow { font-size: 18px; }
 
-    /* Reset */
+  /* ── Reset ── */
   .reset-btn {
     background: none;
-    border: 1px solid var(--border2);
+    border: 1.5px solid var(--border);
     border-radius: 8px;
-    padding: 10px 16px;
+    padding: 10px 18px;
     font-size: 13px;
     color: var(--text3);
     cursor: pointer;
     font-family: 'Noto Sans JP', sans-serif;
-    margin-top: 16px;
+    margin-top: 12px;
     transition: all 0.2s;
   }
 
   .reset-btn:hover {
     color: var(--text2);
     border-color: var(--border2);
+    background: var(--surface);
   }
 
-  /* Error */
+  /* ── Error ── */
   .error-box {
-    background: rgba(255,80,80,0.08);
-    border: 1px solid rgba(255,80,80,0.2);
+    background: #fef2f2;
+    border: 1px solid #fecaca;
     border-radius: 8px;
-    padding: 14px 16px;
+    padding: 12px 16px;
     font-size: 13px;
-    color: #ff8080;
+    color: #dc2626;
     display: none;
-    margin-bottom: 16px;
+    margin-bottom: 14px;
   }
 
   .error-box.visible { display: block; }
 
+  /* ═══ Animations ═══ */
   @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(16px); }
+    from { opacity: 0; transform: translateY(12px); }
     to { opacity: 1; transform: translateY(0); }
   }
 
@@ -741,145 +833,161 @@
     to { transform: rotate(360deg); }
   }
 
-  /* Divider */
-  .divider {
-    height: 1px;
-    background: var(--border);
-    margin: 32px 0;
+  /* ═══ Responsive ═══ */
+  @media (max-width: 900px) {
+    .sidebar { width: 180px; min-width: 180px; }
+    .main-wrapper { margin-left: 180px; }
+    .category-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (max-width: 700px) {
+    .sidebar {
+      display: none;
+    }
+    .main-wrapper {
+      margin-left: 0;
+    }
+    .topbar-title::before {
+      content: '◆ ';
+      color: var(--accent);
+    }
+    .category-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .aux-row {
+      grid-template-columns: 1fr;
+    }
   }
 </style>
 </head>
 <body>
-<div class="app">
 
-  <!-- Header -->
-  <div class="header">
-    <div class="logo">
-      <div class="logo-mark">LM</div>
-      <span class="logo-text">Navigator</span>
-    </div>
+<!-- ═══ Sidebar ═══ -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="sidebar-logo-mark">M</div>
+    <span class="sidebar-logo-text">Marketing Hub</span>
   </div>
+  <div class="sidebar-section-label">ツール</div>
+  <nav class="sidebar-nav">
+    <div class="sidebar-nav-item active">
+      <span class="sidebar-nav-icon">🧭</span>
+      <span>LM Navigator</span>
+    </div>
+  </nav>
+</aside>
 
-  <!-- Hero -->
-  <div class="hero">
-    <div class="hero-title">調査目的を入力するだけで<br><span>ListeningMindの使い方</span>をAIが提案</div>
-    <div class="hero-desc">どの機能を使えばいいか迷わない。キーワード候補から調査実行まで、ステップに沿って進めるだけです。</div>
-    <div class="how-it-works">
-      <div class="how-step">
-        <div class="how-step-num">1</div>
-        <div class="how-step-text">
-          <strong>カテゴリー選択</strong>
-          目的の種類を選ぶ
+<!-- ═══ Main ═══ -->
+<div class="main-wrapper">
+  <header class="topbar">
+    <div class="topbar-title">LM Navigator</div>
+  </header>
+
+  <div class="content-area">
+
+    <!-- How-to -->
+    <div class="how-box">
+      <span class="how-icon">💡</span>
+      <div class="how-text">
+        <strong>使い方：</strong>下の<strong>カテゴリー</strong>を選び、<strong>調査目的</strong>を入力してください。AIが最適なListeningMindの機能とキーワード候補を提案します。提案されたキーワードを選んで「調査実行」ボタンを押すと、ListeningMindが別タブで開きます。
+      </div>
+    </div>
+
+    <!-- Flow bar -->
+    <div class="flow-bar" id="flowBar">
+      <div class="flow-step">
+        <div class="flow-num current" id="flowNum1">1</div>
+        <span class="flow-label current" id="flowLabel1">カテゴリー選択</span>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-num pending" id="flowNum2">2</div>
+        <span class="flow-label" id="flowLabel2">目的を入力</span>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-num pending" id="flowNum3">3</div>
+        <span class="flow-label" id="flowLabel3">AIが提案</span>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-num pending" id="flowNum4">4</div>
+        <span class="flow-label" id="flowLabel4">調査実行</span>
+      </div>
+    </div>
+
+    <!-- Step 1: Category -->
+    <div class="step" style="animation-delay:0.1s">
+      <div class="step-label">
+        <span class="step-label-num">1</span>
+        分析カテゴリーを選んでください
+      </div>
+      <div class="step-desc">何を目的とした調査ですか？目的に合った機能とキーワードをAIが提案します。</div>
+      <div class="category-grid" id="categoryGrid"></div>
+    </div>
+
+    <!-- Step 2: Input -->
+    <div class="step" style="animation-delay:0.2s">
+      <div class="step-label">
+        <span class="step-label-num">2</span>
+        具体的に何を知りたいか入力してください
+      </div>
+      <div class="step-desc">カテゴリーの範囲内で、知りたいことを自由に書いてください。詳しいほど精度が上がります。</div>
+
+      <div class="input-group">
+        <textarea id="purposeInput" rows="3" placeholder="例：ノンアルコール市場の需要トレンドと、どんなシーンで飲まれているかを知りたい"></textarea>
+      </div>
+
+      <div class="aux-fields" id="auxFields">
+        <div class="aux-fields-title">
+          補足情報
+          <span>入力しなくても調査を実行できます。入力するとキーワードの精度が上がります。</span>
         </div>
+        <div id="auxFieldsInner"></div>
       </div>
-      <div class="how-arrow">→</div>
-      <div class="how-step">
-        <div class="how-step-num">2</div>
-        <div class="how-step-text">
-          <strong>目的を入力</strong>
-          知りたいことを自由記述
+
+      <div class="error-box" id="errorBox"></div>
+
+      <button class="submit-btn" id="submitBtn" onclick="runAnalysis()" disabled>
+        <span>AIに機能とキーワードを提案させる</span>
+        <span>→</span>
+      </button>
+    </div>
+
+    <!-- Loading -->
+    <div class="loading" id="loading">
+      <div class="spinner"></div>
+      <div class="loading-text">Geminiが分析中です...</div>
+    </div>
+
+    <!-- Result -->
+    <div class="result-section" id="resultSection">
+      <div class="result-divider"></div>
+
+      <div class="step-label" style="margin-bottom:14px">推奨機能</div>
+      <div class="feat-tabs" id="featTabs"></div>
+      <div class="kw-panel" id="kwPanel"></div>
+
+      <div class="result-notes" id="resultNotes" style="display:none"></div>
+
+      <div class="action-guide" id="actionGuide" style="display:none">
+        <div class="action-guide-header">
+          <span class="action-guide-icon">🧭</span>
+          <span class="action-guide-title">アクションガイド</span>
+          <span class="action-guide-badge" id="actionGuideBadge"></span>
         </div>
+        <div class="action-guide-body" id="actionGuideBody"></div>
       </div>
-      <div class="how-arrow">→</div>
-      <div class="how-step">
-        <div class="how-step-num">3</div>
-        <div class="how-step-text">
-          <strong>AIが提案</strong>
-          機能・KW候補を生成
-        </div>
-      </div>
-      <div class="how-arrow">→</div>
-      <div class="how-step">
-        <div class="how-step-num">4</div>
-        <div class="how-step-text">
-          <strong>調査実行</strong>
-          LMが別タブで開く
-        </div>
-      </div>
+
+      <a class="run-btn disabled" id="runBtn" target="_blank" rel="noopener">
+        <span id="runBtnLabel">調査実行</span>
+        <span class="run-btn-arrow">↗</span>
+      </a>
+
+      <button class="reset-btn" onclick="reset()">← 最初からやり直す</button>
     </div>
+
   </div>
-
-
-
-  <!-- Step 1: Category -->
-  <div class="step" style="animation-delay:0.15s">
-    <div class="step-label">
-      <span class="step-label-num">1</span>
-      分析カテゴリーを選んでください
-    </div>
-    <div class="step-desc">何を目的とした調査ですか？目的に合った機能とキーワードをAIが提案します。</div>
-    <div class="category-grid" id="categoryGrid">
-      <!-- filled by JS -->
-    </div>
-  </div>
-
-  <!-- Step 2: Input -->
-  <div class="step" style="animation-delay:0.25s">
-    <div class="step-label">
-      <span class="step-label-num">2</span>
-      具体的に何を知りたいか入力してください
-    </div>
-    <div class="step-desc">カテゴリーの範囲内で、知りたいことを自由に書いてください。詳しいほど精度が上がります。</div>
-
-    <div class="input-group">
-      <textarea id="purposeInput" rows="3" placeholder="例：ノンアルコール市場の需要トレンドと、どんなシーンで飲まれているかを知りたい"></textarea>
-    </div>
-
-    <div class="aux-fields" id="auxFields">
-      <div class="aux-fields-title">
-        補足情報
-        <span style="font-size:11px;font-weight:400;letter-spacing:0;color:var(--text2);margin-left:6px">入力しなくても調査を実行できます。入力するとキーワードの精度が上がります。</span>
-      </div>
-      <div id="auxFieldsInner"></div>
-    </div>
-
-    <div class="error-box" id="errorBox"></div>
-
-    <button class="submit-btn" id="submitBtn" onclick="runAnalysis()" disabled>
-      <span>AIに機能とキーワードを提案させる</span>
-      <span>→</span>
-    </button>
-  </div>
-
-  <!-- Loading -->
-  <div class="loading" id="loading">
-    <div class="spinner"></div>
-    <div class="loading-text">Geminiが分析中です...</div>
-  </div>
-
-  <!-- Result -->
-  <div class="result-section" id="resultSection">
-    <div class="divider"></div>
-
-    <!-- 推奨機能タブ -->
-    <div class="step-label" style="margin-bottom:14px">推奨機能</div>
-    <div class="feat-tabs" id="featTabs"></div>
-
-    <!-- キーワードパネル -->
-    <div class="kw-panel" id="kwPanel"></div>
-
-    <!-- Notes -->
-    <div class="result-notes" id="resultNotes" style="display:none"></div>
-
-    <!-- アクションガイド -->
-    <div class="action-guide" id="actionGuide" style="display:none">
-      <div class="action-guide-header">
-        <span class="action-guide-icon">🧭</span>
-        <span class="action-guide-title">アクションガイド</span>
-        <span class="action-guide-badge" id="actionGuideBadge"></span>
-      </div>
-      <div class="action-guide-body" id="actionGuideBody"></div>
-    </div>
-
-    <!-- 調査実行ボタン -->
-    <a class="run-btn disabled" id="runBtn" target="_blank" rel="noopener">
-      <span id="runBtnLabel">調査実行</span>
-      <span class="run-btn-arrow">↗</span>
-    </a>
-
-    <button class="reset-btn" onclick="reset()">← 最初からやり直す</button>
-  </div>
-
 </div>
 
 <script>
@@ -1001,7 +1109,7 @@ const FEATURES = {
 const SYSTEM_PROMPT = `あなたはListeningMind（検索インテント分析ツール）の使い方をガイドするアシスタントです。
 
 ユーザーが「やりたいこと・調べたいこと」を入力したら、以下のJSONフォーマットのみで回答してください。
-説明文・前置き・マークダウン記号（\｀\｀\｀json等）は一切含めないこと。
+説明文・前置き・マークダウン記号（\`\`\`json等）は一切含めないこと。
 
 ## ListeningMindの機能一覧と使い分け基準
 
@@ -1216,6 +1324,30 @@ Step1: キーワードを入力する。Step2: 検索経路グラフが表示さ
 
 let selectedCategory = null;
 let analysisResult = null;
+let activeTabIndex = 0;
+
+// ─── Flow bar update ────────────────────────────────────────────────
+
+function updateFlow(step) {
+  for (let i = 1; i <= 4; i++) {
+    const num = document.getElementById('flowNum' + i);
+    const label = document.getElementById('flowLabel' + i);
+    num.className = 'flow-num';
+    label.className = 'flow-label';
+    if (i < step) {
+      num.className = 'flow-num done';
+      num.textContent = '✓';
+      label.className = 'flow-label done';
+    } else if (i === step) {
+      num.className = 'flow-num current';
+      num.textContent = i;
+      label.className = 'flow-label current';
+    } else {
+      num.className = 'flow-num pending';
+      num.textContent = i;
+    }
+  }
+}
 
 // ─── Init ────────────────────────────────────────────────────────────
 
@@ -1235,6 +1367,7 @@ function init() {
   });
 
   document.getElementById('purposeInput').addEventListener('input', checkSubmit);
+  updateFlow(1);
 }
 
 function selectCategory(cat) {
@@ -1248,28 +1381,27 @@ function selectCategory(cat) {
   inner.innerHTML = '';
 
   if (cat.aux && cat.aux.length > 0) {
+    const row = document.createElement('div');
+    row.className = 'aux-row';
     cat.aux.forEach(field => {
       const group = document.createElement('div');
       group.className = 'input-group';
-      group.style.marginBottom = '12px';
-
+      group.style.marginBottom = '8px';
       group.innerHTML = `
-          <label>${field.label} <span class="optional">任意</span></label>
-          <input type="text" id="aux_${field.id}" placeholder="${field.placeholder}">
-        `;
-      inner.appendChild(group);
+        <label>${field.label} <span class="optional">任意</span></label>
+        <input type="text" id="aux_${field.id}" placeholder="${field.placeholder}">
+      `;
+      row.appendChild(group);
     });
+    inner.appendChild(row);
     auxFields.classList.add('visible');
   } else {
     auxFields.classList.remove('visible');
   }
 
+  updateFlow(2);
   checkSubmit();
 }
-
-
-
-
 
 function checkSubmit() {
   const purpose = document.getElementById('purposeInput').value.trim();
@@ -1281,7 +1413,6 @@ function checkSubmit() {
 async function runAnalysis() {
   const purpose = document.getElementById('purposeInput').value.trim();
 
-  // Collect aux values
   const auxValues = {};
   if (selectedCategory && selectedCategory.aux) {
     selectedCategory.aux.forEach(field => {
@@ -1290,13 +1421,11 @@ async function runAnalysis() {
     });
   }
 
-  // Build user message
   let userMsg = `カテゴリー：${selectedCategory.name}\n目的：${purpose}`;
   if (Object.keys(auxValues).length > 0) {
     userMsg += '\n補足情報：\n' + Object.entries(auxValues).map(([k,v]) => `- ${k}：${v}`).join('\n');
   }
 
-  // UI
   document.getElementById('errorBox').classList.remove('visible');
   document.getElementById('loading').classList.add('visible');
   document.getElementById('resultSection').classList.remove('visible');
@@ -1327,11 +1456,11 @@ async function runAnalysis() {
     const data = await res.json();
     const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
 
-    // Parse JSON (strip any accidental fences)
     const clean = text.replace(/```json|```/g, '').trim();
     analysisResult = JSON.parse(clean);
 
     renderResult(analysisResult);
+    updateFlow(3);
 
   } catch (e) {
     const errBox = document.getElementById('errorBox');
@@ -1345,13 +1474,10 @@ async function runAnalysis() {
 
 // ─── Render ──────────────────────────────────────────────────────────
 
-let activeTabIndex = 0; // 現在選択中のタブ（機能）インデックス
-
 function renderResult(result) {
   const features = (result.recommended_features || []).slice(0, 2);
   const keywords = result.keywords || [];
 
-  // Notes
   const notesEl = document.getElementById('resultNotes');
   if (result.notes) {
     notesEl.textContent = '💡 ' + result.notes;
@@ -1362,14 +1488,12 @@ function renderResult(result) {
 
   activeTabIndex = 0;
   renderTabs(features, keywords);
-
   renderActionGuide(result);
   document.getElementById('resultSection').classList.add('visible');
   document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function renderActionGuide(result) {
-  // 初期表示はpriority:1の機能のガイドを表示
   const topFeature = (result.recommended_features || [])[0];
   if (topFeature) {
     updateActionGuideByFeature(topFeature);
@@ -1390,8 +1514,6 @@ function updateActionGuideByFeature(feature) {
 
   badgeEl.textContent = feature.feature;
 
-
-  // Stepをカード形式に分割
   const steps = guide.split(/(?=Step[\s]*[0-9]+[\s]*[：:])/).filter(s => s.trim());
   let formatted = '';
   if (steps.length > 1) {
@@ -1400,8 +1522,8 @@ function updateActionGuideByFeature(feature) {
       if (m) {
         const num = m[2];
         const body = m[3].trim();
-        formatted += '<div style="display:flex;gap:10px;align-items:flex-start;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:6px">'
-          + '<span style="background:rgba(91,108,255,0.15);color:var(--accent2);font-size:11px;font-weight:600;padding:2px 7px;border-radius:20px;flex-shrink:0;margin-top:1px">' + num + '</span>'
+        formatted += '<div style="display:flex;gap:10px;align-items:flex-start;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:6px">'
+          + '<span style="background:var(--accent-light);color:var(--accent);font-size:11px;font-weight:600;padding:2px 7px;border-radius:20px;flex-shrink:0;margin-top:1px">' + num + '</span>'
           + '<span style="font-size:13px;color:var(--text);line-height:1.65">' + body + '</span></div>';
       } else {
         formatted += '<div style="font-size:13px;color:var(--text2);line-height:1.65;margin-bottom:4px">' + step.trim() + '</div>';
@@ -1448,7 +1570,6 @@ function renderKwPanel(feature, allKeywords) {
   const info = FEATURES[feature.feature];
   const isMulti = info && info.multi;
 
-  // タイトル
   const title = document.createElement('div');
   title.className = 'kw-panel-title';
   title.innerHTML = `
@@ -1459,7 +1580,6 @@ function renderKwPanel(feature, allKeywords) {
   `;
   panel.appendChild(title);
 
-  // この機能に紐づくKWを絞り込む
   const relatedKws = allKeywords.filter(k => k.applicable_features.includes(feature.feature));
   const kwsToShow = relatedKws.length > 0 ? relatedKws : allKeywords;
 
@@ -1467,7 +1587,6 @@ function renderKwPanel(feature, allKeywords) {
     const item = document.createElement('div');
 
     if (isMulti) {
-      // チェックボックスモード
       item.className = 'kw-item checked';
       item.dataset.kw = kw.keyword;
       item.innerHTML = `
@@ -1482,7 +1601,6 @@ function renderKwPanel(feature, allKeywords) {
         updateRunBtn(feature, allKeywords);
       };
     } else {
-      // ラジオモード
       item.className = 'kw-item' + (i === 0 ? ' radio-selected' : '');
       item.dataset.kw = kw.keyword;
       item.innerHTML = `
@@ -1496,11 +1614,9 @@ function renderKwPanel(feature, allKeywords) {
         panel.querySelectorAll('.kw-item').forEach(el => {
           el.classList.remove('radio-selected');
           el.querySelector('.kw-radio')?.classList.remove('selected');
-          el.querySelector('.kw-radio-dot') && (el.querySelector('.kw-radio-dot').style.background = '');
         });
         item.classList.add('radio-selected');
-        const radio = item.querySelector('.kw-radio');
-        radio.classList.add('selected');
+        item.querySelector('.kw-radio').classList.add('selected');
         updateRunBtn(feature, allKeywords);
       };
     }
@@ -1542,6 +1658,8 @@ function updateRunBtn(feature, allKeywords) {
   } else {
     runBtnLabel.textContent = `${feature.feature} で調査実行 —「${selectedKws[0]}」`;
   }
+
+  updateFlow(4);
 }
 
 function buildUrl(featureName, info, keywords) {
@@ -1573,6 +1691,7 @@ function reset() {
   runBtn.classList.add('disabled');
   runBtn.removeAttribute('href');
   checkSubmit();
+  updateFlow(1);
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
