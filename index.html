@@ -1315,6 +1315,10 @@ async function runAnalysis() {
       }
     );
 
+    if (res.status === 429) {
+      throw new Error('1日の利用上限（20回）に達しました。明日また利用してください。');
+    }
+
     if (!res.ok) {
       const err = await res.json();
       throw new Error(err?.error?.message || `API Error ${res.status}`);
