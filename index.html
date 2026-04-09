@@ -1,0 +1,1578 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LM Navigator</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --surface2: #16161f;
+    --border: #1e1e2e;
+    --border2: #2a2a3e;
+    --accent: #5b6cff;
+    --accent2: #7c8bff;
+    --accent-glow: rgba(91,108,255,0.15);
+    --text: #e8e8f0;
+    --text2: #9090a8;
+    --text3: #5a5a70;
+    --success: #3ecf8e;
+    --warning: #f5a623;
+    --tag-bg: rgba(91,108,255,0.12);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans JP', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(91,108,255,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(91,108,255,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .app {
+    position: relative;
+    z-index: 1;
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+
+  /* Header */
+  .header {
+    margin-bottom: 40px;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .logo-mark {
+    width: 32px;
+    height: 32px;
+    background: var(--accent);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 14px;
+    color: white;
+    letter-spacing: -0.5px;
+  }
+
+  .logo-text {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--text2);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  /* ヒーローセクション */
+  .hero {
+    margin-bottom: 32px;
+  }
+
+  .hero-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+    color: var(--text);
+    margin-bottom: 10px;
+  }
+
+  .hero-title span { color: var(--accent2); }
+
+  .hero-desc {
+    font-size: 15px;
+    color: var(--text2);
+    line-height: 1.7;
+    margin-bottom: 20px;
+  }
+
+  /* 使い方フロー */
+  .how-it-works {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 20px;
+    overflow-x: auto;
+  }
+
+  .how-step {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .how-step-num {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--accent-glow);
+    border: 1px solid var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--accent2);
+    flex-shrink: 0;
+  }
+
+  .how-step-text {
+    font-size: 12px;
+    color: var(--text2);
+    white-space: nowrap;
+  }
+
+  .how-step-text strong {
+    color: var(--text);
+    font-weight: 500;
+    display: block;
+    font-size: 12px;
+  }
+
+  .how-arrow {
+    font-size: 14px;
+    color: var(--text3);
+    margin: 0 12px;
+    flex-shrink: 0;
+  }
+
+
+
+  /* Step */
+  .step {
+    margin-bottom: 28px;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  .step-label {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .step-label-num {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--accent-glow);
+    border: 1px solid rgba(91,108,255,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--accent2);
+    flex-shrink: 0;
+  }
+
+  .step-desc {
+    font-size: 12px;
+    color: var(--text3);
+    margin-bottom: 12px;
+    line-height: 1.5;
+  }
+
+  /* Category Grid */
+  .category-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+
+  .cat-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+  }
+
+  .cat-btn:hover {
+    border-color: var(--accent);
+    background: var(--accent-glow);
+    transform: translateY(-1px);
+  }
+
+  .cat-btn.selected {
+    border-color: var(--accent);
+    background: var(--accent-glow);
+    box-shadow: 0 0 0 1px var(--accent);
+  }
+
+  .cat-icon {
+    font-size: 20px;
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  .cat-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.4;
+    margin-bottom: 3px;
+  }
+
+  .cat-desc {
+    font-size: 11px;
+    color: var(--text2);
+    line-height: 1.5;
+  }
+
+    /* Input fields */
+  .input-group {
+    margin-bottom: 16px;
+  }
+
+  .input-group .optional {
+    font-size: 10px;
+    color: var(--text3);
+    margin-left: 6px;
+    font-weight: 400;
+  }
+
+  .input-group input,
+  .input-group textarea {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-size: 14px;
+    font-family: 'Noto Sans JP', sans-serif;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s;
+    resize: none;
+  }
+
+  .input-group input::placeholder,
+  .input-group textarea::placeholder {
+    color: var(--text3);
+  }
+
+  .input-group input:focus,
+  .input-group textarea:focus {
+    border-color: var(--accent);
+  }
+
+  /* Aux fields */
+  .aux-fields {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 16px;
+    display: none;
+  }
+
+  .aux-fields.visible { display: block; }
+
+  .aux-fields-title {
+    font-size: 11px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 12px;
+  }
+
+  .aux-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  /* Submit button */
+  .submit-btn {
+    width: 100%;
+    background: var(--accent);
+    border: none;
+    border-radius: 10px;
+    padding: 16px;
+    font-size: 14px;
+    font-weight: 500;
+    font-family: 'Noto Sans JP', sans-serif;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    letter-spacing: 0.02em;
+  }
+
+  .submit-btn:hover:not(:disabled) {
+    background: var(--accent2);
+    box-shadow: 0 4px 20px rgba(91,108,255,0.4);
+    transform: translateY(-1px);
+  }
+
+  .submit-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  /* Loading */
+  .loading {
+    display: none;
+    text-align: center;
+    padding: 40px;
+  }
+
+  .loading.visible { display: block; }
+
+  .spinner {
+    width: 36px;
+    height: 36px;
+    border: 2px solid var(--border2);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 16px;
+  }
+
+  .loading-text {
+    font-size: 14px;
+    color: var(--text2);
+  }
+
+  /* Result */
+  .result-section {
+    display: none;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  .result-section.visible { display: block; }
+
+  /* ── 推奨機能タブ ── */
+  .feat-tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 0;
+    border-radius: 12px 12px 0 0;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-bottom: none;
+  }
+
+  .feat-tab {
+    flex: 1;
+    padding: 14px 18px;
+    background: var(--surface);
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    border-right: 1px solid var(--border);
+  }
+
+  .feat-tab:last-child { border-right: none; }
+
+  .feat-tab:hover { background: var(--surface2); }
+
+  .feat-tab.active {
+    background: var(--surface2);
+  }
+
+  .feat-tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--accent);
+  }
+
+  .feat-tab-priority {
+    font-size: 10px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 3px;
+  }
+
+  .feat-tab.active .feat-tab-priority { color: var(--accent2); }
+
+  .feat-tab-name {
+    font-size: 14px;
+    font-weight: 700;
+    font-family: 'Syne', sans-serif;
+    color: var(--text2);
+    margin-bottom: 3px;
+  }
+
+  .feat-tab.active .feat-tab-name { color: var(--text); }
+
+  .feat-tab-reason {
+    font-size: 12px;
+    color: var(--text2);
+    line-height: 1.6;
+  }
+
+  /* ── キーワードパネル ── */
+  .kw-panel {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 0 0 12px 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+
+  .kw-panel-title {
+    font-size: 11px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .kw-mode-badge {
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-weight: 500;
+  }
+
+  .kw-mode-badge.multi {
+    background: rgba(91,108,255,0.15);
+    color: var(--accent2);
+    border: 1px solid rgba(91,108,255,0.25);
+  }
+
+  .kw-mode-badge.single {
+    background: rgba(62,207,142,0.1);
+    color: var(--success);
+    border: 1px solid rgba(62,207,142,0.25);
+  }
+
+  /* キーワードアイテム */
+  .kw-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 11px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: all 0.18s;
+    margin-bottom: 7px;
+  }
+
+  .kw-item:last-child { margin-bottom: 0; }
+  .kw-item:hover { border-color: var(--border2); }
+
+  /* チェックボックス（複数選択） */
+  .kw-item.checked {
+    border-color: var(--accent);
+    background: rgba(91,108,255,0.07);
+  }
+
+  .kw-checkbox {
+    width: 17px; height: 17px;
+    border: 1.5px solid var(--border2);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.18s;
+  }
+
+  .kw-item.checked .kw-checkbox {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .kw-check-icon { display: none; color: white; font-size: 10px; }
+  .kw-item.checked .kw-check-icon { display: block; }
+
+  /* ラジオ（単一選択） */
+  .kw-item.radio-selected {
+    border-color: var(--success);
+    background: rgba(62,207,142,0.07);
+  }
+
+  .kw-radio {
+    width: 17px; height: 17px;
+    border: 1.5px solid var(--border2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.18s;
+  }
+
+  .kw-radio.selected { border-color: var(--success); }
+
+  .kw-radio-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: transparent;
+    transition: background 0.18s;
+  }
+
+  .kw-radio.selected .kw-radio-dot { background: var(--success); }
+
+  .kw-text {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    flex: 1;
+  }
+
+  .kw-purpose {
+    font-size: 12px;
+    color: var(--text2);
+    margin-top: 1px;
+  }
+
+  /* ── Notes ── */
+  .result-notes {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--warning);
+    border-radius: 8px;
+    padding: 11px 14px;
+    font-size: 12px;
+    color: var(--text2);
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+
+  /* ── アクションガイド ── */
+  .action-guide {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--success);
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin-bottom: 16px;
+    animation: fadeUp 0.4s ease both;
+  }
+
+  .action-guide-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .action-guide-icon { font-size: 15px; }
+
+  .action-guide-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text2);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    flex: 1;
+  }
+
+  .action-guide-badge {
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    background: rgba(62,207,142,0.12);
+    color: var(--success);
+    border: 1px solid rgba(62,207,142,0.25);
+  }
+
+  .action-guide-body {
+    font-size: 13px;
+    color: var(--text2);
+    line-height: 1.8;
+    white-space: pre-wrap;
+  }
+
+  .action-guide-loading {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text3);
+    font-size: 13px;
+  }
+
+  .action-guide-advice {
+    margin-top: 14px;
+    padding: 10px 12px;
+    background: rgba(245,166,35,0.08);
+    border: 1px solid rgba(245,166,35,0.25);
+    border-radius: 6px;
+    font-size: 12px;
+    color: var(--text2);
+    line-height: 1.6;
+  }
+
+  .action-guide-advice strong {
+    color: var(--warning);
+  }
+
+  .action-guide-spinner {
+    width: 14px;
+    height: 14px;
+    border: 1.5px solid var(--border2);
+    border-top-color: var(--success);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    flex-shrink: 0;
+  }
+
+    /* ── 調査実行ボタン ── */
+  .run-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 17px;
+    background: var(--accent);
+    border: none;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    font-family: 'Noto Sans JP', sans-serif;
+    color: white;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 12px;
+    letter-spacing: 0.02em;
+    box-sizing: border-box;
+  }
+
+  .run-btn:hover:not(.disabled) {
+    background: var(--accent2);
+    box-shadow: 0 4px 24px rgba(91,108,255,0.45);
+    transform: translateY(-1px);
+  }
+
+  .run-btn.disabled {
+    background: var(--surface2);
+    color: var(--text3);
+    border: 1px solid var(--border);
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  .run-btn-arrow { font-size: 18px; }
+
+    /* Reset */
+  .reset-btn {
+    background: none;
+    border: 1px solid var(--border2);
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-size: 13px;
+    color: var(--text3);
+    cursor: pointer;
+    font-family: 'Noto Sans JP', sans-serif;
+    margin-top: 16px;
+    transition: all 0.2s;
+  }
+
+  .reset-btn:hover {
+    color: var(--text2);
+    border-color: var(--border2);
+  }
+
+  /* Error */
+  .error-box {
+    background: rgba(255,80,80,0.08);
+    border: 1px solid rgba(255,80,80,0.2);
+    border-radius: 8px;
+    padding: 14px 16px;
+    font-size: 13px;
+    color: #ff8080;
+    display: none;
+    margin-bottom: 16px;
+  }
+
+  .error-box.visible { display: block; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  /* Divider */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 32px 0;
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="logo">
+      <div class="logo-mark">LM</div>
+      <span class="logo-text">Navigator</span>
+    </div>
+  </div>
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-title">調査目的を入力するだけで<br><span>ListeningMindの使い方</span>をAIが提案</div>
+    <div class="hero-desc">どの機能を使えばいいか迷わない。キーワード候補から調査実行まで、ステップに沿って進めるだけです。</div>
+    <div class="how-it-works">
+      <div class="how-step">
+        <div class="how-step-num">1</div>
+        <div class="how-step-text">
+          <strong>カテゴリー選択</strong>
+          目的の種類を選ぶ
+        </div>
+      </div>
+      <div class="how-arrow">→</div>
+      <div class="how-step">
+        <div class="how-step-num">2</div>
+        <div class="how-step-text">
+          <strong>目的を入力</strong>
+          知りたいことを自由記述
+        </div>
+      </div>
+      <div class="how-arrow">→</div>
+      <div class="how-step">
+        <div class="how-step-num">3</div>
+        <div class="how-step-text">
+          <strong>AIが提案</strong>
+          機能・KW候補を生成
+        </div>
+      </div>
+      <div class="how-arrow">→</div>
+      <div class="how-step">
+        <div class="how-step-num">4</div>
+        <div class="how-step-text">
+          <strong>調査実行</strong>
+          LMが別タブで開く
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <!-- Step 1: Category -->
+  <div class="step" style="animation-delay:0.15s">
+    <div class="step-label">
+      <span class="step-label-num">1</span>
+      分析カテゴリーを選んでください
+    </div>
+    <div class="step-desc">何を目的とした調査ですか？目的に合った機能とキーワードをAIが提案します。</div>
+    <div class="category-grid" id="categoryGrid">
+      <!-- filled by JS -->
+    </div>
+  </div>
+
+  <!-- Step 2: Input -->
+  <div class="step" style="animation-delay:0.25s">
+    <div class="step-label">
+      <span class="step-label-num">2</span>
+      具体的に何を知りたいか入力してください
+    </div>
+    <div class="step-desc">カテゴリーの範囲内で、知りたいことを自由に書いてください。詳しいほど精度が上がります。</div>
+
+    <div class="input-group">
+      <textarea id="purposeInput" rows="3" placeholder="例：ノンアルコール市場の需要トレンドと、どんなシーンで飲まれているかを知りたい"></textarea>
+    </div>
+
+    <div class="aux-fields" id="auxFields">
+      <div class="aux-fields-title">
+        補足情報
+        <span style="font-size:11px;font-weight:400;letter-spacing:0;color:var(--text2);margin-left:6px">入力しなくても調査を実行できます。入力するとキーワードの精度が上がります。</span>
+      </div>
+      <div id="auxFieldsInner"></div>
+    </div>
+
+    <div class="error-box" id="errorBox"></div>
+
+    <button class="submit-btn" id="submitBtn" onclick="runAnalysis()" disabled>
+      <span>AIに機能とキーワードを提案させる</span>
+      <span>→</span>
+    </button>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+    <div class="loading-text">Geminiが分析中です...</div>
+  </div>
+
+  <!-- Result -->
+  <div class="result-section" id="resultSection">
+    <div class="divider"></div>
+
+    <!-- 推奨機能タブ -->
+    <div class="step-label" style="margin-bottom:14px">推奨機能</div>
+    <div class="feat-tabs" id="featTabs"></div>
+
+    <!-- キーワードパネル -->
+    <div class="kw-panel" id="kwPanel"></div>
+
+    <!-- Notes -->
+    <div class="result-notes" id="resultNotes" style="display:none"></div>
+
+    <!-- アクションガイド -->
+    <div class="action-guide" id="actionGuide" style="display:none">
+      <div class="action-guide-header">
+        <span class="action-guide-icon">🧭</span>
+        <span class="action-guide-title">アクションガイド</span>
+        <span class="action-guide-badge" id="actionGuideBadge"></span>
+      </div>
+      <div class="action-guide-body" id="actionGuideBody"></div>
+    </div>
+
+    <!-- 調査実行ボタン -->
+    <a class="run-btn disabled" id="runBtn" target="_blank" rel="noopener">
+      <span id="runBtnLabel">調査実行</span>
+      <span class="run-btn-arrow">↗</span>
+    </a>
+
+    <button class="reset-btn" onclick="reset()">← 最初からやり直す</button>
+  </div>
+
+</div>
+
+<script>
+// ─── Data ───────────────────────────────────────────────────────────
+
+const CATEGORIES = [
+  {
+    id: 'market',
+    icon: '📊',
+    name: '市場・需要調査',
+    desc: '規模・トレンド把握',
+    aux: [
+      { id: 'product', label: '調査対象の商品・サービス名', placeholder: '例：ノンアルコールビール' },
+      { id: 'region', label: '対象市場', placeholder: '例：国内、海外（米国）' },
+    ]
+  },
+  {
+    id: 'insight',
+    icon: '🔍',
+    name: '消費者インサイト発掘',
+    desc: 'ニーズ・CEP発見',
+    aux: [
+      { id: 'category', label: '商品・カテゴリー名', placeholder: '例：プロテインドリンク' },
+      { id: 'direction', label: '知りたいニーズの方向性', placeholder: '例：健康意識、コスパ重視など' },
+      { id: 'attr_insight', label: 'ターゲット属性', placeholder: '例：40代男性、健康意識高め' },
+    ]
+  },
+  {
+    id: 'journey',
+    icon: '🗺️',
+    name: '購買ジャーニー分析',
+    desc: '意思決定プロセス追跡',
+    aux: [
+      { id: 'seed', label: '起点となるキーワードまたは商品名', placeholder: '例：転職エージェント' },
+      { id: 'attr_journey', label: 'ターゲット属性', placeholder: '例：40代男性、育児中の女性' },
+    ]
+  },
+  {
+    id: 'competitor',
+    icon: '⚔️',
+    name: '競合・ブランド分析',
+    desc: 'ブランドスイッチ把握',
+    aux: [
+      { id: 'own_brand', label: '自社ブランド名', placeholder: '例：アサヒ ドライゼロ' },
+      { id: 'comp_brand', label: '比較したい競合ブランド名', placeholder: '例：キリン グリーンズフリー' },
+    ]
+  },
+  {
+    id: 'content',
+    icon: '✍️',
+    name: 'コンテンツ・SEO戦略',
+    desc: '記事テーマ・KW選定',
+    aux: [
+      { id: 'media', label: '対象サイト・メディアのテーマ', placeholder: '例：健康食品メディア' },
+      { id: 'reader', label: 'ターゲット読者像', placeholder: '例：30代・健康意識高め' },
+    ]
+  },
+  {
+    id: 'creative',
+    icon: '🎨',
+    name: '広告・クリエイティブ戦略',
+    desc: '訴求軸・コピーの根拠',
+    aux: [
+      { id: 'product2', label: '訴求したい商品・サービス', placeholder: '例：ノンアルコールビール' },
+      { id: 'target', label: '想定ターゲット', placeholder: '例：妊娠中の女性、健康志向の男性' },
+    ]
+  },
+  {
+    id: 'product_dev',
+    icon: '💡',
+    name: '新商品・サービス開発',
+    desc: '未充足ニーズ発見',
+    aux: [
+      { id: 'cat2', label: '開発中の商品カテゴリー', placeholder: '例：機能性飲料' },
+      { id: 'problem', label: '解決したい課題', placeholder: '例：睡眠の質を改善したい' },
+      { id: 'attr_dev', label: 'ターゲット属性', placeholder: '例：50代女性、シニア層' },
+    ]
+  },
+  {
+    id: 'persona',
+    icon: '👤',
+    name: 'ペルソナ設計',
+    desc: 'ターゲット人物像の具体化',
+    aux: [
+      { id: 'persona_kw', label: '商品・カテゴリー名', placeholder: '例：プロテイン' },
+      { id: 'persona_img', label: 'ターゲット属性', placeholder: '例：筋トレ初心者の20代女性' },
+    ]
+  },
+];
+
+const FEATURES = {
+  'インテントファインダー': {
+    url: 'https://www.listeningmind.com/ja/query',
+    param: 'keywords',
+    multi: true,
+  },
+  'クラスターファインダー': {
+    url: 'https://www.listeningmind.com/ja/cluster',
+    param: 'keyword',
+    multi: false,
+  },
+  'パスファインダー': {
+    url: 'https://www.listeningmind.com/ja/path/pthv',
+    param: 'keyword',
+    multi: false,
+  },
+  'ペルソナビュー': {
+    url: 'https://www.listeningmind.com/ja/path/prsnv',
+    param: 'keyword',
+    multi: false,
+  },
+  'ロードビュー': {
+    url: 'https://www.listeningmind.com/ja/path/rdv',
+    param: 'keyword',
+    multi: false,
+  },
+};
+
+const SYSTEM_PROMPT = `あなたはListeningMind（検索インテント分析ツール）の使い方をガイドするアシスタントです。
+
+ユーザーが「やりたいこと・調べたいこと」を入力したら、以下のJSONフォーマットのみで回答してください。
+説明文・前置き・マークダウン記号（\｀\｀\｀json等）は一切含めないこと。
+
+## ListeningMindの機能一覧と使い分け基準
+
+### インテントファインダー
+- 複数キーワード（最大100個）を同時投入可能
+- 関連キーワードを「トピック」単位で分類・一覧化する
+- 検索量・CPC・広告競合性・検索量推移（最大4年）を取得できる
+【この機能を選ぶ条件】
+- 市場全体のキーワード量・規模感を把握したい
+- どんなトピックが存在するか網羅的に調べたい
+- 競合との比較や広告出稿判断をしたい
+- 複数ブランド・複数商品を横断して調べたい
+【キーワードの渡し方】複数可。ノンブランドKW・ブランドKWを分けて投入するのが効果的。
+
+### パスファインダー
+- 1つのキーワードを起点に、前後の検索経路を最大10ステップで可視化する
+- 消費者が「何を調べてからこのKWに来て、この後どこへ向かうか」が分かる
+【この機能を選ぶ条件】
+- 消費者の意思決定プロセス・購買ジャーニーを追いたい
+- ペルソナ設計・カスタマージャーニーマップを作りたい
+- 広告コピー・コンテンツのトンマナの根拠を探したい
+- 「どのタイミングでブランドが想起されるか」を知りたい
+【キーワードの渡し方】1つのみ。最も核となるシードキーワードを1語選ぶこと。
+
+### クラスターファインダー
+- 1つのキーワードの前後3ステップで最大2万語の関連KWを収集し、意味・目的別にグループ化する
+- 市場の全体構造と「まだ顕在化していないニーズの芽」を発見できる
+【この機能を選ぶ条件】
+- 市場に存在するニーズの種類を網羅的に把握したい
+- カテゴリーエントリーポイント（CEP）を発見したい
+- 新商品・新サービスのコンセプト開発のヒントが欲しい
+- 「自社が気づいていない競合文脈・隣接市場」を探したい
+【キーワードの渡し方】1つのみ。最も市場を代表するノンブランドKWが適切。
+
+### ペルソナビュー
+- パスファインダーの派生機能。同じ目的・文脈を持つ検索者を自動グルーピングし、ペルソナ別に検索経路を整理する
+【この機能を選ぶ条件】
+- ペルソナを複数に分けて検索行動の違いを比較したい
+- 「誰が・なぜ・どんな流れで」検索しているかをタイプ別に整理したい
+【キーワードの渡し方】1つのみ。
+
+### ロードビュー
+- パスファインダーの派生機能。競合ブランド→自社ブランドへの流入経路や、自社→競合への流出経路を可視化する
+【この機能を選ぶ条件】
+- 競合ブランドからの流入・流出を知りたい
+- ブランドスイッチの実態を検索データで把握したい
+【キーワードの渡し方】1つのみ。自社ブランド名またはカテゴリー名を入力。
+
+## 出力フォーマット（JSONのみ・厳守）
+
+{
+  "recommended_features": [
+    {
+      "feature": "機能名（インテントファインダー／パスファインダー／クラスターファインダー／ペルソナビュー／ロードビューのいずれか）",
+      "reason": "この機能を勧める理由を50字以内で",
+      "priority": 1
+    }
+  ],
+  "keywords": [
+    {
+      "keyword": "キーワード文字列（日本語・消費者が実際に検索する語句）",
+      "purpose": "このキーワードを使う意図を20字以内で",
+      "applicable_features": ["対応する機能名"]
+    }
+  ],
+  "notes": "補足があれば記載。なければ空文字。",
+  "action_guides": {
+    "機能名1": "その機能で目的を達成するための操作ガイド。600文字以内・Step1:〜Step2:〜のステップ形式。",
+    "機能名2": "その機能で目的を達成するための操作ガイド。600文字以内・Step1:〜Step2:〜のステップ形式。"
+  }
+}
+
+## ルール
+- recommended_featuresは最大2つ、priorityは1から連番
+- keywordsは最大8個（推奨機能が2つある場合は各機能に4個ずつ計8個を目安に生成する）
+- パスファインダー・クラスターファインダー・ペルソナビュー・ロードビューはUIで1つしか選択できないが、キーワード候補は必ず3〜5個生成すること。ユーザーがその中から最適な1つを選ぶ
+- インテントファインダーはキーワードを複数同時投入できるため、3〜5個生成する
+- ブランド名を含む場合はpurposeに「ブランドKW」と明記
+- purposeフィールドは「どんな消費者がどんな状況で打つか」を20字以内で説明する（分析語・マーケ語禁止）
+- action_guideは、推奨機能（priority:1の機能）を使って今回の目的を達成するための操作ガイドを400文字以内で生成する
+- action_guideは以下の機能別ガイド情報を参考に、ユーザーの目的に合わせてカスタマイズしたステップ形式で書く
+- 「Step1:」「Step2:」のように番号付きステップにする
+- action_guidesは推奨した全機能分のガイドを生成する。キーは機能名（例：「パスファインダー」）、値は600文字以内のStep形式ガイド
+- 【最重要】各ガイドは「機能の一般的な操作手順」をそのまま書いてはいけない。必ず「ユーザーの具体的な目的を達成するために、その機能のどの操作をどう使うか」を書くこと
+- Step内には「なぜその操作をするか（目的との関連）」を必ず含める
+- 入力するキーワードが決まっている場合は、Stepの中に具体的なキーワード例を入れる
+- 以下の【機能別ガイド情報】を参照して操作の詳細を補完しつつ、常にユーザーの目的を主語にして書く
+
+【良い例】目的「プロテインを飲み始めるきっかけを知りたい」× パスファインダー：
+Step1: 「プロテイン 飲み始め 効果」を入力する。飲み始めを検討している人の検索起点として最適なため。
+Step2: グラフ左側（前の検索）を確認し、どんな悩みや状況からプロテインに辿り着くかを把握する。
+Step3: グラフ右側（後の検索）を確認し、飲み始めた後に何を調べるか（継続・商品比較など）を把握する。
+Step4: ペルソナビューに切り替え、きっかけのタイプ別（筋トレ目的・ダイエット目的など）に分類して比較する。
+
+【悪い例】目的に関係なく機能の操作を説明しているだけ：
+Step1: キーワードを入力する。Step2: 検索経路グラフが表示される。Step3: フィルターを使う。（← 禁止）
+- JSONのみ返すこと。それ以外は一切出力しない
+
+## 【機能別ガイド情報】（action_guide生成時に参照する）
+
+### インテントファインダー（クエリファインダー）操作ガイド
+- 画面上部のキーワード入力欄に調査キーワードを1〜100個入力してEnter
+- 「トピック」タブで関連キーワードが自動分類される。検索ボリュームが多いトピックから優先的に確認する
+- 「検索量推移」グラフで時系列トレンドを確認し、急上昇・急下降トピックに注目する
+- 「インテント」フィルターで検索意図（情報収集・比較・購買など）ごとに絞り込む
+- 競合比較をする場合は自社ブランドKWと競合ブランドKWを同時入力して差分を確認する
+- 広告活用の場合はCPC・広告競合性の高いキーワードに注目する
+
+【目的別の見方】
+- 未充足ニーズ発見・新商品開発の場合：「まずい」「物足りない」「ない」「できない」など不満・不足を含むトピックに注目する。また、検索ボリュームは小さいが増加傾向にある（検索量推移が上昇中の）トピックは、まだ商品が存在しない潜在ニーズの可能性が高い。ブランドKWがほとんど含まれないトピックは市場にまだ解決策がない領域のシグナル
+- 市場調査・需要把握の場合：ボリューム上位トピックの構成比と推移を確認し、どのニーズが拡大・縮小しているかを把握する
+- コンテンツ・SEO戦略の場合：情報収集インテントのKWで、CPC・競合性が低いものを優先的に確認する
+- 競合分析の場合：自社ブランドKWと競合ブランドKWを同時入力し、トピック構成の差分を確認する
+
+### パスファインダー操作ガイド
+- キーワード入力欄に調査キーワード（2語以内推奨）を入力してEnter
+- 検索経路グラフが表示される。青い線が時系列順の検索フロー、赤い線が逆方向の遷移を示す
+- 調査KWの左側（前の検索）を見て「どこから来るか＝課題認識フェーズ」を把握する
+- 調査KWの右側（後の検索）を見て「どこへ向かうか＝比較・購買フェーズ」を把握する
+- 特定キーワードをクリックするとそのKWを中心とした前後1ステップに絞り込める
+- 「ペルソナビュー」タブに切り替えると目的別にクラスタリングされた検索者グループが確認できる
+- クラスターを選択後、画面右下の「ListeningMind AI Service」から「AIレビュー」をクリックすると各クラスターの潜在動機・インサイトが自動言語化される
+
+【目的別の見方】
+- 購買ジャーニー・きっかけ把握の場合：左側（前の検索）で課題認識の起点KWを確認し、どんな状況・悩みから辿り着くかを把握する。右側では「比較」「購入」へと向かう分岐点を見つける
+- ペルソナ設計の場合：ペルソナビューに切り替えてクラスターを確認し、AIレビューでペルソナごとの動機・インサイトを言語化する
+- 広告・コンテンツ設計の場合：経路上で検索が分岐する「迷いのポイント」となるKWを特定し、そのKWに対応するコンテンツ・訴求を設計する
+- 競合流出分析の場合：ロードビューに切り替え、自社KWから競合KWへの流出経路を確認する
+
+### クラスターファインダー操作ガイド
+- キーワード入力欄に調査キーワード（カテゴリ名・特徴・用途の組み合わせが最適）を入力してEnter
+- グラフビューで全体のクラスター構造を俯瞰し、大きなまとまり（ニーズ群）を把握する
+- カードビューに切り替えると各クラスターのキーワード一覧と検索ボリュームが確認できる
+- 右上の「ステップ数」を調整して前後何ステップのKWを収集するか変更できる（最大3ステップ）
+- 【AIレビュー機能】確認したいクラスターを選択後、画面右下の「ListeningMind AI Service」から「AIレビュー」をクリックすると、そのクラスターの潜在ニーズ・インサイトをAIが自動要約する。検索者の状況・動機・課題・広告コピーヒントが言語化される
+- 【ペルソナ設計目的の場合】各クラスターがペルソナタイプに対応する。クラスター名と含まれるKWを確認して「どんな人が・どんな状況で・何を求めて」検索しているかをクラスターごとに整理する。AIレビューのペルソナ欄を活用すると人物像の言語化が効率化できる
+- 「上位URL」タブでそのクラスターで影響力のあるサイト・ドメインを確認してSEO・メディア戦略に活用する
+- 検索量推移フィルターで急増クラスターを絞り込み、今後伸びるニーズの芽を発見する
+
+### ペルソナビュー操作ガイド
+- パスファインダーで検索後、画面上部の「ペルソナビュー」タブをクリックして切り替える
+- 目的別にクラスタリングされた検索者グループ（ペルソナ）が表示される
+- 各クラスターをクリックするとそのペルソナの検索経路と行動パターンが展開される
+- クラスターを選択後、画面右下の「ListeningMind AI Service」から「AIレビュー」をクリックするとペルソナごとの状況・動機・インサイト・広告コピーヒントが自動生成される
+- クラスター同士を比較して「購入に至るペルソナ」と「離脱するペルソナ」の違いを分析する
+
+### ロードビュー操作ガイド
+- パスファインダーで検索後、画面上部の「ロードビュー」タブをクリックして切り替える
+- 「始点」に調査したいブランド名またはキーワードを設定する。これが起点となり、そのKWからの検索流入経路が可視化される（終点の個別指定はできない）
+- 競合ブランドへの流出経路を確認したい場合は、画面内の「ページ内検索」に競合ブランド名を入力する。競合ブランドが経路に含まれる経路のみに絞り込まれる
+- 例：「ユニクロ」を始点に設定してロードビューを実行→ページ内検索に「無印良品」と入力すると、ユニクロから無印良品へ流れる経路だけが表示される
+- 経路上の中間キーワードを確認し、どのタイミングで比較・離脱が起きているかを特定する
+- 自社への流入経路を確認したい場合は、始点に自社ブランドKWを設定して経路全体を俯瞰する
+
+## キーワード生成の最重要ルール
+
+### ステップ1：ターゲット像と情報収集フェーズを内部で定義する（出力しない）
+
+キーワードを生成する前に、以下を頭の中で考える（JSONには出力しない）。
+
+1. 「誰が」→ 調査目的から想定されるターゲット像を具体化する
+   例：「筋トレを始めたばかりの20代男性」「ダイエット中の30代女性」
+
+2. 「何のために」→ そのターゲットが情報収集する目的を明確にする
+   例：「プロテインが本当に必要か知りたい」「どれを買えばいいか決めたい」
+
+3. 「どんな検索フェーズを経るか」→ 情報収集の流れを3〜4段階で想定する
+   例：
+   フェーズ1（課題認識）：「筋トレ 食事 何食べる」「筋トレ 栄養 初心者」
+   フェーズ2（解決策探索）：「プロテイン 必要 初心者」「プロテイン 効果 いつから」
+   フェーズ3（商品選定）：「プロテイン おすすめ コスパ」「プロテイン 選び方 初心者」
+   フェーズ4（購入判断）：「プロテイン 飲み方 初心者」「プロテイン 続けるコツ」
+
+### ステップ2：各フェーズで消費者が実際に打つキーワードを生成する
+
+ステップ1で想定した検索フェーズをもとに、消費者がGoogleの検索窓に実際に入力する言葉を生成する。
+
+#### 絶対ルール：消費者が打たない言葉は使わない
+マーケターが分析目的で使う言葉はキーワードに含めない。
+
+禁止ワード：きっかけ／なぜ／理由／動機／ニーズ／市場／トレンド／需要／ターゲット／インサイト／購買
+
+【判定テスト】「一般の消費者がこの言葉をGoogleで検索するか？」→ NOなら使わない
+
+✗ プロテイン 購入 きっかけ（消費者は打たない）
+✗ プロテインドリンク なぜ飲む（消費者は打たない）
+✓ 筋トレ 食事 何食べる（消費者が実際に打つ）
+✓ プロテイン いつ飲む 効果的（消費者が実際に打つ）
+
+#### purposeの書き方
+「どんな消費者がどんな状況・フェーズで打つか」を20字以内で書く。分析語禁止。
+✗ purpose：「購入さっかけの起点」（分析語）
+✓ purpose：「筋トレ始めたばかりで食事を調べている」（消費者の状況）
+✓ purpose：「プロテインを試す前に効果を確認したい」（消費者の状況）
+
+### ステップ3：機能別に候補数を揃えて出力する
+
+**パスファインダー・クラスターファインダー・ペルソナビュー（UIで1つ選択する機能）**
+- ユーザーが選べるよう、異なる検索フェーズ・シーンから候補を必ず4〜5個生成する
+- 商品名・カテゴリー名の1語だけは不可。必ず状況・シーン・悩みの語を付加すること
+- 各候補が異なるフェーズ・角度を表すようにバリエーションを持たせる
+
+**ロードビュー（例外）**
+- ブランド名をそのまま渡す（文脈語の付加不要）
+- 候補は3〜5個のブランド名を生成する
+
+**インテントファインダー（複数同時投入できる機能）**
+- 異なるフェーズ・シーン・悩みから4〜5個生成する
+- すべてのキーワードが禁止ワードを含まない消費者語であること`;
+
+// ─── State ──────────────────────────────────────────────────────────
+
+let selectedCategory = null;
+let analysisResult = null;
+
+// ─── Init ────────────────────────────────────────────────────────────
+
+function init() {
+  const grid = document.getElementById('categoryGrid');
+  CATEGORIES.forEach(cat => {
+    const btn = document.createElement('button');
+    btn.className = 'cat-btn';
+    btn.dataset.id = cat.id;
+    btn.innerHTML = `
+      <span class="cat-icon">${cat.icon}</span>
+      <div class="cat-name">${cat.name}</div>
+      <div class="cat-desc">${cat.desc}</div>
+    `;
+    btn.onclick = () => selectCategory(cat);
+    grid.appendChild(btn);
+  });
+
+  document.getElementById('purposeInput').addEventListener('input', checkSubmit);
+}
+
+function selectCategory(cat) {
+  selectedCategory = cat;
+
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('selected'));
+  document.querySelector(`.cat-btn[data-id="${cat.id}"]`).classList.add('selected');
+
+  const auxFields = document.getElementById('auxFields');
+  const inner = document.getElementById('auxFieldsInner');
+  inner.innerHTML = '';
+
+  if (cat.aux && cat.aux.length > 0) {
+    cat.aux.forEach(field => {
+      const group = document.createElement('div');
+      group.className = 'input-group';
+      group.style.marginBottom = '12px';
+
+      group.innerHTML = `
+          <label>${field.label} <span class="optional">任意</span></label>
+          <input type="text" id="aux_${field.id}" placeholder="${field.placeholder}">
+        `;
+      inner.appendChild(group);
+    });
+    auxFields.classList.add('visible');
+  } else {
+    auxFields.classList.remove('visible');
+  }
+
+  checkSubmit();
+}
+
+
+
+
+
+function checkSubmit() {
+  const purpose = document.getElementById('purposeInput').value.trim();
+  document.getElementById('submitBtn').disabled = !(purpose && selectedCategory);
+}
+
+// ─── Analysis ────────────────────────────────────────────────────────
+
+async function runAnalysis() {
+  const purpose = document.getElementById('purposeInput').value.trim();
+
+  // Collect aux values
+  const auxValues = {};
+  if (selectedCategory && selectedCategory.aux) {
+    selectedCategory.aux.forEach(field => {
+      const el = document.getElementById(`aux_${field.id}`);
+      if (el && el.value.trim()) auxValues[field.label] = el.value.trim();
+    });
+  }
+
+  // Build user message
+  let userMsg = `カテゴリー：${selectedCategory.name}\n目的：${purpose}`;
+  if (Object.keys(auxValues).length > 0) {
+    userMsg += '\n補足情報：\n' + Object.entries(auxValues).map(([k,v]) => `- ${k}：${v}`).join('\n');
+  }
+
+  // UI
+  document.getElementById('errorBox').classList.remove('visible');
+  document.getElementById('loading').classList.add('visible');
+  document.getElementById('resultSection').classList.remove('visible');
+  document.getElementById('submitBtn').disabled = true;
+
+  try {
+    const res = await fetch(
+      `https://lm-navigator-api.yamagishimktgoffice.workers.dev/`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          system_instruction: { parts: [{ text: SYSTEM_PROMPT }] },
+          contents: [{ role: 'user', parts: [{ text: userMsg }] }]
+        })
+      }
+    );
+
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err?.error?.message || `API Error ${res.status}`);
+    }
+
+    const data = await res.json();
+    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+
+    // Parse JSON (strip any accidental fences)
+    const clean = text.replace(/```json|```/g, '').trim();
+    analysisResult = JSON.parse(clean);
+
+    renderResult(analysisResult);
+
+  } catch (e) {
+    const errBox = document.getElementById('errorBox');
+    errBox.textContent = `エラー: ${e.message}`;
+    errBox.classList.add('visible');
+  } finally {
+    document.getElementById('loading').classList.remove('visible');
+    document.getElementById('submitBtn').disabled = false;
+  }
+}
+
+// ─── Render ──────────────────────────────────────────────────────────
+
+let activeTabIndex = 0; // 現在選択中のタブ（機能）インデックス
+
+function renderResult(result) {
+  const features = (result.recommended_features || []).slice(0, 2);
+  const keywords = result.keywords || [];
+
+  // Notes
+  const notesEl = document.getElementById('resultNotes');
+  if (result.notes) {
+    notesEl.textContent = '💡 ' + result.notes;
+    notesEl.style.display = 'block';
+  } else {
+    notesEl.style.display = 'none';
+  }
+
+  activeTabIndex = 0;
+  renderTabs(features, keywords);
+
+  renderActionGuide(result);
+  document.getElementById('resultSection').classList.add('visible');
+  document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function renderActionGuide(result) {
+  // 初期表示はpriority:1の機能のガイドを表示
+  const topFeature = (result.recommended_features || [])[0];
+  if (topFeature) {
+    updateActionGuideByFeature(topFeature);
+  }
+}
+
+function updateActionGuideByFeature(feature) {
+  const guides = analysisResult && analysisResult.action_guides;
+  const guideEl = document.getElementById('actionGuide');
+  const bodyEl = document.getElementById('actionGuideBody');
+  const badgeEl = document.getElementById('actionGuideBadge');
+
+  const guide = guides && (guides[feature.feature] || '');
+  if (!guide) {
+    guideEl.style.display = 'none';
+    return;
+  }
+
+  badgeEl.textContent = feature.feature;
+
+
+  // Stepをカード形式に分割
+  const steps = guide.split(/(?=Step[\s]*[0-9]+[\s]*[：:])/).filter(s => s.trim());
+  let formatted = '';
+  if (steps.length > 1) {
+    steps.forEach(step => {
+      const m = step.match(/^(Step[\s]*([0-9]+)[\s]*[：:])(.*)/s);
+      if (m) {
+        const num = m[2];
+        const body = m[3].trim();
+        formatted += '<div style="display:flex;gap:10px;align-items:flex-start;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:6px">'
+          + '<span style="background:rgba(91,108,255,0.15);color:var(--accent2);font-size:11px;font-weight:600;padding:2px 7px;border-radius:20px;flex-shrink:0;margin-top:1px">' + num + '</span>'
+          + '<span style="font-size:13px;color:var(--text);line-height:1.65">' + body + '</span></div>';
+      } else {
+        formatted += '<div style="font-size:13px;color:var(--text2);line-height:1.65;margin-bottom:4px">' + step.trim() + '</div>';
+      }
+    });
+  } else {
+    formatted = '<div style="font-size:13px;color:var(--text2);line-height:1.8">' + guide + '</div>';
+  }
+  const isRoadView = feature.feature === 'ロードビュー';
+  const advice = isRoadView ? '' : '<div class="action-guide-advice">💡 <strong>出力結果の解釈について</strong>　画面右下の「ListeningMind AI Service」を起動することで、目的別に特化したAIアナリストの分析支援を受けることができます。</div>';
+  bodyEl.innerHTML = formatted + advice;
+  guideEl.style.display = 'block';
+}
+
+function renderTabs(features, keywords) {
+  const tabsEl = document.getElementById('featTabs');
+  tabsEl.innerHTML = '';
+
+  features.forEach((f, i) => {
+    const tab = document.createElement('div');
+    tab.className = 'feat-tab' + (i === activeTabIndex ? ' active' : '');
+    tab.innerHTML = `
+      <div class="feat-tab-priority">${i === 0 ? '★ 最優先' : '優先度 2'}</div>
+      <div class="feat-tab-name">${f.feature}</div>
+      <div class="feat-tab-reason">${f.reason}</div>
+    `;
+    tab.onclick = () => {
+      activeTabIndex = i;
+      document.querySelectorAll('.feat-tab').forEach((t, ti) => {
+        t.classList.toggle('active', ti === i);
+      });
+      renderKwPanel(features[i], keywords);
+      updateActionGuideByFeature(features[i]);
+    };
+    tabsEl.appendChild(tab);
+  });
+
+  renderKwPanel(features[activeTabIndex], keywords);
+}
+
+function renderKwPanel(feature, allKeywords) {
+  const panel = document.getElementById('kwPanel');
+  panel.innerHTML = '';
+  const info = FEATURES[feature.feature];
+  const isMulti = info && info.multi;
+
+  // タイトル
+  const title = document.createElement('div');
+  title.className = 'kw-panel-title';
+  title.innerHTML = `
+    <span class="kw-mode-badge ${isMulti ? 'multi' : 'single'}">
+      ${isMulti ? '複数選択可' : '1つ選択'}
+    </span>
+    調査キーワード
+  `;
+  panel.appendChild(title);
+
+  // この機能に紐づくKWを絞り込む
+  const relatedKws = allKeywords.filter(k => k.applicable_features.includes(feature.feature));
+  const kwsToShow = relatedKws.length > 0 ? relatedKws : allKeywords;
+
+  kwsToShow.forEach((kw, i) => {
+    const item = document.createElement('div');
+
+    if (isMulti) {
+      // チェックボックスモード
+      item.className = 'kw-item checked';
+      item.dataset.kw = kw.keyword;
+      item.innerHTML = `
+        <div class="kw-checkbox"><span class="kw-check-icon">✓</span></div>
+        <div>
+          <div class="kw-text">${kw.keyword}</div>
+          <div class="kw-purpose">${kw.purpose}</div>
+        </div>
+      `;
+      item.onclick = () => {
+        item.classList.toggle('checked');
+        updateRunBtn(feature, allKeywords);
+      };
+    } else {
+      // ラジオモード
+      item.className = 'kw-item' + (i === 0 ? ' radio-selected' : '');
+      item.dataset.kw = kw.keyword;
+      item.innerHTML = `
+        <div class="kw-radio ${i === 0 ? 'selected' : ''}"><div class="kw-radio-dot"></div></div>
+        <div>
+          <div class="kw-text">${kw.keyword}</div>
+          <div class="kw-purpose">${kw.purpose}</div>
+        </div>
+      `;
+      item.onclick = () => {
+        panel.querySelectorAll('.kw-item').forEach(el => {
+          el.classList.remove('radio-selected');
+          el.querySelector('.kw-radio')?.classList.remove('selected');
+          el.querySelector('.kw-radio-dot') && (el.querySelector('.kw-radio-dot').style.background = '');
+        });
+        item.classList.add('radio-selected');
+        const radio = item.querySelector('.kw-radio');
+        radio.classList.add('selected');
+        updateRunBtn(feature, allKeywords);
+      };
+    }
+    panel.appendChild(item);
+  });
+
+  updateRunBtn(feature, allKeywords);
+}
+
+function updateRunBtn(feature, allKeywords) {
+  const info = FEATURES[feature.feature];
+  const runBtn = document.getElementById('runBtn');
+  const runBtnLabel = document.getElementById('runBtnLabel');
+  if (!info) return;
+
+  const panel = document.getElementById('kwPanel');
+
+  let selectedKws = [];
+  if (info.multi) {
+    selectedKws = [...panel.querySelectorAll('.kw-item.checked')].map(el => el.dataset.kw);
+  } else {
+    const sel = panel.querySelector('.kw-item.radio-selected');
+    if (sel) selectedKws = [sel.dataset.kw];
+  }
+
+  if (selectedKws.length === 0) {
+    runBtn.classList.add('disabled');
+    runBtn.removeAttribute('href');
+    runBtnLabel.textContent = 'キーワードを選択してください';
+    return;
+  }
+
+  const url = buildUrl(feature.feature, info, selectedKws);
+  runBtn.classList.remove('disabled');
+  runBtn.href = url;
+
+  if (info.multi) {
+    runBtnLabel.textContent = `${feature.feature} で調査実行（${selectedKws.length}件）`;
+  } else {
+    runBtnLabel.textContent = `${feature.feature} で調査実行 —「${selectedKws[0]}」`;
+  }
+}
+
+function buildUrl(featureName, info, keywords) {
+  const base = info.url + '?locale=JP';
+  if (!keywords || keywords.length === 0) return base;
+  if (info.multi) {
+    const params = keywords.map(k => info.param + '=' + encodeURIComponent(k)).join('&');
+    return base + '&' + params;
+  } else {
+    return base + '&' + info.param + '=' + encodeURIComponent(keywords[0]);
+  }
+}
+
+function reset() {
+  selectedCategory = null;
+  analysisResult = null;
+  activeTabIndex = 0;
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById('purposeInput').value = '';
+  document.getElementById('auxFields').classList.remove('visible');
+  document.getElementById('auxFieldsInner').innerHTML = '';
+  document.getElementById('resultSection').classList.remove('visible');
+  document.getElementById('featTabs').innerHTML = '';
+  document.getElementById('kwPanel').innerHTML = '';
+  document.getElementById('actionGuide').style.display = 'none';
+  document.getElementById('actionGuideBody').innerHTML = '';
+  document.getElementById('errorBox').classList.remove('visible');
+  const runBtn = document.getElementById('runBtn');
+  runBtn.classList.add('disabled');
+  runBtn.removeAttribute('href');
+  checkSubmit();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+init();
+</script>
+</body>
+</html>
