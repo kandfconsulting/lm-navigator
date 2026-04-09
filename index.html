@@ -964,7 +964,7 @@
     <div class="result-section" id="resultSection">
       <div class="result-divider"></div>
 
-      <div class="step-label" style="margin-bottom:14px">推奨機能</div>
+      <div class="step-label" id="resultTop" style="margin-bottom:14px">推奨機能</div>
       <div class="feat-tabs" id="featTabs"></div>
       <div class="kw-panel" id="kwPanel"></div>
 
@@ -1490,7 +1490,9 @@ function renderResult(result) {
   renderTabs(features, keywords);
   renderActionGuide(result);
   document.getElementById('resultSection').classList.add('visible');
-  document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  setTimeout(() => {
+    document.getElementById('resultTop').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 50);
 }
 
 function renderActionGuide(result) {
