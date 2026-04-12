@@ -284,7 +284,7 @@
 
   /* ═══ Step containers ═══ */
   .step {
-    margin-bottom: 24px;
+    margin-bottom: 32px;
     animation: fadeUp 0.5s ease both;
   }
 
@@ -902,31 +902,8 @@
       </div>
     </div>
 
-    <!-- Flow bar -->
-    <div class="flow-bar" id="flowBar">
-      <div class="flow-step">
-        <div class="flow-num current" id="flowNum1">1</div>
-        <span class="flow-label current" id="flowLabel1">カテゴリー選択</span>
-      </div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-step">
-        <div class="flow-num pending" id="flowNum2">2</div>
-        <span class="flow-label" id="flowLabel2">目的を入力</span>
-      </div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-step">
-        <div class="flow-num pending" id="flowNum3">3</div>
-        <span class="flow-label" id="flowLabel3">AIが提案</span>
-      </div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-step">
-        <div class="flow-num pending" id="flowNum4">4</div>
-        <span class="flow-label" id="flowLabel4">調査実行</span>
-      </div>
-    </div>
-
     <!-- Step 1: Category -->
-    <div class="step" style="animation-delay:0.1s">
+    <div class="step" id="step1" style="animation-delay:0.1s">
       <div class="step-label">
         <span class="step-label-num">1</span>
         分析カテゴリーを選んでください
@@ -936,7 +913,7 @@
     </div>
 
     <!-- Step 2: Input -->
-    <div class="step" style="animation-delay:0.2s">
+    <div class="step" id="step2" style="animation-delay:0.2s">
       <div class="step-label">
         <span class="step-label-num">2</span>
         具体的に何を知りたいか入力してください
@@ -1341,6 +1318,34 @@ let activeTabIndex = 0;
 
 // ─── Flow bar update ────────────────────────────────────────────────
 
+function createFlowBar() {
+  const bar = document.createElement('div');
+  bar.className = 'flow-bar';
+  bar.id = 'flowBar';
+  bar.innerHTML = `
+    <div class="flow-step">
+      <div class="flow-num pending" id="flowNum1">1</div>
+      <span class="flow-label" id="flowLabel1">カテゴリー選択</span>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-num pending" id="flowNum2">2</div>
+      <span class="flow-label" id="flowLabel2">目的を入力</span>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-num pending" id="flowNum3">3</div>
+      <span class="flow-label" id="flowLabel3">AIが提案</span>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-num pending" id="flowNum4">4</div>
+      <span class="flow-label" id="flowLabel4">調査実行</span>
+    </div>
+  `;
+  return bar;
+}
+
 function updateFlow(step) {
   for (let i = 1; i <= 4; i++) {
     const num = document.getElementById('flowNum' + i);
@@ -1360,11 +1365,26 @@ function updateFlow(step) {
       num.textContent = i;
     }
   }
+
+  // Move the flow bar to the top of the current active section
+  const flowBar = document.getElementById('flowBar');
+  let target;
+  if (step <= 1) target = document.getElementById('step1');
+  else if (step === 2) target = document.getElementById('step2');
+  else target = document.getElementById('resultSection');
+
+  if (target && target.firstChild !== flowBar) {
+    target.insertBefore(flowBar, target.firstChild);
+  }
 }
 
 // ─── Init ────────────────────────────────────────────────────────────
 
 function init() {
+  // Create and insert flow bar at the top of step 1
+  const step1 = document.getElementById('step1');
+  step1.insertBefore(createFlowBar(), step1.firstChild);
+
   const grid = document.getElementById('categoryGrid');
   CATEGORIES.forEach(cat => {
     const btn = document.createElement('button');
